@@ -27,12 +27,19 @@ export class Render extends Component {
     var ws_data = [];
 
     let pushData = [];
+    let dataCount = 0;
 
-    await datas.map((data, index) => {
-      pushData.push(data.toString());
-      if ((index + 1) % 4 === 0) {
+    await datas.map(data => {
+      dataCount++;
+      if (dataCount === 3) {
+        pushData.push(data.toString());
         ws_data.push(pushData);
         pushData = [];
+      } else if (dataCount === 4) {
+        dataCount = 0;
+        //do nothing
+      } else {
+        pushData.push(data.toString());
       }
     });
 
