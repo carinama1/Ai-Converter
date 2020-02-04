@@ -10,7 +10,8 @@ export class Render extends Component {
       file: null,
       imagePreviewUrl: null,
       canvasHeight: 0,
-      canvasWidth: 0
+      canvasWidth: 0,
+      lastImage: { width: 0, height: 0 }
     };
   }
 
@@ -58,12 +59,20 @@ export class Render extends Component {
       `${file.name}.xlsx`
     );
   };
+  resetCanvas = () => {
+    let c = document.getElementById("myCanvas");
+    let ctx = c.getContext("2d");
+    const { height, width } = this.state.lastImage;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, width, height);
+  };
 
-  handleSubmit(e) {
+  handleSubmit = async e => {
     e.preventDefault();
     // TODO: do something with -> this.state.file
+    await this.resetCanvas();
     this.renderCanvas();
-  }
+  };
 
   renderCanvas = async () => {
     let c = document.getElementById("myCanvas");
@@ -75,12 +84,11 @@ export class Render extends Component {
 
       await this.setState(
         {
-          canvasHeight: height * 10,
-          canvasWidth: width * 10
+          canvasHeight: height * 6,
+          canvasWidth: width * 15,
+          lastImage: { height, width }
         },
         () => {
-          ctx.fillStyle = "white";
-          ctx.fillRect(0, 0, width, height);
           ctx.drawImage(myImage, 0, 0);
         }
       );
@@ -164,7 +172,7 @@ export class Render extends Component {
 
     return (
       <div className="previewComponent">
-        <form onSubmit={e => this.handleSubmit(e)}>
+        <form>
           <input
             className="fileInput"
             type="file"
@@ -173,7 +181,7 @@ export class Render extends Component {
           />
           <button
             className="submitButton"
-            type="submit"
+            type="button"
             onClick={e => this.handleSubmit(e)}
           >
             Upload Image
